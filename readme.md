@@ -1,7 +1,7 @@
 <p align="center">
   <img
-    src="https://cdn.freebiesupply.com/logos/large/2x/open-source-logo-png-transparent.png"
-    alt="Logo Open Source"
+    src="https://cdn.cosmicjs.com/b35a4610-e351-11f1-b54b-cd26348e5040-1000199996-picsay.png"
+    alt="Logo OpenLP2M - UMPR"
     width="112"
   >
 </p>

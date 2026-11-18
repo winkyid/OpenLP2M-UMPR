@@ -1,0 +1,35 @@
+<tr style="height: 29px">
+    <th id="0000000" style="height: 29px;" class="row-headers-background row-header-shim">
+        <div style="line-height: 29px">3</div>
+    </th>
+    <td class="s2" colspan="6">Kelompok * (* Mahasiswa) — DPL: * [*] — Lokasi: * (*) — *</td>
+</tr>
+
+//contoh data asli ngambil dari kelompok 1 dengan gid 1638322221 (https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vSuZJ9KDPrg6pxCjIDhegWxEsckRcpnN_9-3mmmhQc-WShF5iYvS_40wfl_9_OX3Q/pubhtml/sheet?headers=false&gid=1638322221
+): 
+<tr style="height: 29px">
+    <th id="1638322221R2" style="height: 29px;" class="row-headers-background row-header-shim">
+        <div style="line-height: 29px">3</div>
+    </th>
+    <td class="s2" colspan="6">Kelompok 1 (15 Mahasiswa) — DPL: Dr. Milka, S.Sos., M.A.P [Administrasi Publik] — Lokasi: Kelurahan Bukit Tunggal (Kec. Jekan Raya)</td>
+</tr>
+
+/* id:00000 adalah id th yang biasanya di dapat otomatis dari gid spreedsheet yang menentukan untuk mendapatkan data nama kelompok, Jumlah anggota, DPL, Lokasi, dan Keterangan. id ini akan diambil dari data yang diambil dari spreedsheet. */
+/* 'Kelompok * = nama kelompok, (* Mahasiswa) = jumlah anggota, DPL: * [*] = nama DPL dan NIP DPL, Lokasi: * (*) = lokasi dan jumlah anggota di lokasi tersebut, dan * = keterangan tambahan. */'
+/* contoh data asli diambil dari kelompok 1 dengan gid 1638322221: Kelompok 1 (15 Mahasiswa) — DPL: Dr. Milka, S.Sos., M.A.P [Administrasi Publik] — Lokasi: Kelurahan Bukit Tunggal (Kec. Jekan Raya) */
+/* informasi ini berguna untuk penerapan data untuk interface OpenLP2M-UMPR, agar data yang diambil dari spreedsheet bisa diolah menjadi data yang bisa digunakan di bagian detail. */
+/* data [*] atau data bagian prodi tidak akan digunakan karena di UI OpenLP2M-UMPR tidak menampilkan data prodi, sehingga data ini akan diabaikan. */
+
+/* ini berfungsi untuk update lebih lanjut dari hal berikut */
+<script>
+Object.assign(kelompok_1, { // Nomor kelompok disesuaikan dengan data dari spreadsheet
+  nama: NAMA_KELOMPOK,
+  dpl: NAMA_DPL,
+  lokasi: LOKASI_KKN,
+  jumlah_anggota: 0, //angka jumlah anggota di lokasi kkn
+  ketua_kelompok: KETUA_KELOMPOK,
+  url_map: "",
+  url_spreedsheet: "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vSuZJ9KDPrg6pxCjIDhegWxEsckRcpnN_9-3mmmhQc-WShF5iYvS_40wfl_9_OX3Q/pubhtml/sheet?headers=false&gid=ID_GID",
+  url_preview_thumbnail: "",
+});
+</script>

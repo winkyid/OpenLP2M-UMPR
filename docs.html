@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <meta
+      name="description"
+      content="Dokumentasi teknis developer OpenLP2M - UMPR untuk sistem daftar kelompok KKN 51."
+    >
+    <title>Dokumentasi Developer | OpenLP2M - UMPR</title>
+    <link rel="icon" type="image/png" href="https://cdn.freebiesupply.com/logos/large/2x/open-source-logo-png-transparent.png">
+    <link rel="apple-touch-icon" href="https://cdn.freebiesupply.com/logos/large/2x/open-source-logo-png-transparent.png">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:site_name" content="OpenLP2M - UMPR">
+    <meta property="og:title" content="Dokumentasi Developer | OpenLP2M - UMPR">
+    <meta
+      property="og:description"
+      content="Dokumentasi teknis developer tentang sumber data, parsing spreadsheet, pencarian, dan sistem tampilan OpenLP2M - UMPR."
+    >
+    <meta property="og:image" content="https://cdn.freebiesupply.com/logos/large/2x/open-source-logo-png-transparent.png">
+    <meta property="og:image:secure_url" content="https://cdn.freebiesupply.com/logos/large/2x/open-source-logo-png-transparent.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="Logo Open Source OpenLP2M - UMPR">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Dokumentasi Developer | OpenLP2M - UMPR">
+    <meta
+      name="twitter:description"
+      content="Dokumentasi teknis developer OpenLP2M - UMPR."
+    >
+    <meta name="twitter:image" content="https://cdn.freebiesupply.com/logos/large/2x/open-source-logo-png-transparent.png">
+    <meta name="twitter:image:alt" content="Logo Open Source OpenLP2M - UMPR">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="OpenLP2M - UMPR, daftar kelompok">
+        <img
+          class="brand-logo"
+          src="https://cdn.freebiesupply.com/logos/large/2x/open-source-logo-png-transparent.png"
+          alt=""
+        >
+        <span>OpenLP2M <span class="brand-divider">-</span> UMPR</span>
+      </a>
+      <nav class="site-nav" aria-label="Navigasi utama">
+        <a href="./index.html#listing">Kelompok</a>
+        <a href="./docs.html" aria-current="page">Docs</a>
+      </nav>
+      <span class="header-label">Dokumentasi developer</span>
+    </header>
+
+    <main class="developer-docs">
+      <p class="eyebrow"><span class="eyebrow-dot"></span> Dokumentasi teknis</p>
+      <h1 id="docs-title">OpenLP2M <span>- UMPR</span></h1>
+      <p class="docs-lead">
+        Catatan implementasi untuk developer yang memelihara daftar kelompok KKN 51 UMPR 2026.
+        Halaman ini menjelaskan sumber data, proses parsing, dan alur tampilan.
+      </p>
+
+      <section class="docs-block" aria-labelledby="architecture-title">
+        <h2 id="architecture-title">Arsitektur</h2>
+        <p>
+          Situs ini adalah aplikasi statis tanpa server atau proses build. <code>index.html</code>
+          memuat <code>list-url-spreedsheat.js</code> sebagai konfigurasi 25 kelompok, lalu
+          <code>app.js</code> mengambil data publik dan membangun antarmuka menggunakan DOM API.
+          GitHub Pages dapat melayani berkas-berkas ini langsung dari root repositori.
+        </p>
+        <div class="docs-code-list">
+          <p><code>index.html</code> — halaman daftar dan dialog detail.</p>
+          <p><code>list-url-spreedsheat.js</code> — URL spreadsheet per kelompok, termasuk parameter <code>gid</code>.</p>
+          <p><code>app.js</code> — pengambilan data, parsing, pencarian, tabel native, dan tampilan spreadsheet mentah.</p>
+          <p><code>styles.css</code> — gaya halaman, tabel, dialog, dan breakpoint mobile.</p>
+        </div>
+      </section>
+
+      <section class="docs-block" aria-labelledby="source-title">
+        <h2 id="source-title">Sumber dan pemuatan data</h2>
+        <ol class="technical-steps">
+          <li>
+            <h3>Konfigurasi URL</h3>
+            <p>
+              Setiap objek kelompok menyimpan <code>url_spreedsheet</code>. Aplikasi membaca
+              parameter <code>gid</code> dari URL itu untuk menemukan baris yang sesuai di HTML
+              publik Google Sheets.
+            </p>
+          </li>
+          <li>
+            <h3>Ringkasan kelompok — baris 3</h3>
+            <p>
+              Elemen header baris memiliki ID <code>{gid}R2</code>. Sel ringkasan di baris tersebut
+              berisi nama kelompok, jumlah mahasiswa, DPL, lokasi, dan keterangan. Aplikasi
+              mengambil teks sel, memisahkan bagian berdasarkan tanda pisah, lalu mengisi metadata
+              kartu dan dialog. Nama prodi di dalam tanda kurung siku pada bagian DPL tidak dipakai.
+            </p>
+          </li>
+          <li>
+            <h3>Judul tabel dan anggota — mulai baris 4</h3>
+            <p>
+              Baris judul tabel memiliki ID <code>{gid}R3</code>. Enam sel judul menjadi kolom
+              tabel: <code>No</code>, <code>NIM</code>, <code>Nama Mahasiswa</code>,
+              <code>Program Studi (SIAKAD)</code>, <code>Fakultas</code>, dan <code>Angkatan</code>.
+              Baris setelahnya diambil sebagai anggota; baris kosong dan baris tanpa nomor serta
+              nama tidak ditampilkan. Dua baris dokumen sebelumnya dan baris ringkasan tidak masuk
+              ke tabel native.
+            </p>
+          </li>
+          <li>
+            <h3>Sinkronisasi dan kegagalan</h3>
+            <p>
+              Saat halaman daftar dibuka, metadata 25 spreadsheet diminta secara paralel dengan
+              <code>Promise.allSettled</code>. Hasil sukses dipakai untuk memperbarui kartu dan
+              disimpan dalam cache memori agar tabel dapat dibuka tanpa fetch kedua. Kegagalan
+              ditampilkan di status halaman dan dicatat ke konsol; membuka tabel untuk kelompok
+              yang gagal dapat mencoba mengambil datanya kembali.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="docs-block" aria-labelledby="examples-title">
+        <h2 id="examples-title">Contoh kode pengembangan</h2>
+        <p>
+          Cuplikan berikut menunjukkan kontrak inti sistem. Nama fungsi mengikuti implementasi di
+          <code>app.js</code>; contoh bisa dijadikan dasar saat menambah fitur atau memperbaiki parser.
+        </p>
+
+        <figure class="code-example">
+          <figcaption>1. Konfigurasi sumber satu kelompok</figcaption>
+          <pre><code class="language-js">Object.assign(kelompok_1, {
+  nama: "",
+  dpl: "",
+  lokasi: "",
+  jumlah_anggota: 0,
+  url_spreedsheet: "URL_PUBLIK_SPREADSHEET?gid=GID_KELOMPOK",
+  url_preview_thumbnail: "",
+});
+
+// Data ini diekspos oleh list-url-spreedsheat.js
+const groups = window.daftarKelompok;</code></pre>
+        </figure>
+
+        <figure class="code-example">
+          <figcaption>2. Ambil HTML publik dan ringkasan baris 3</figcaption>
+          <pre><code class="language-js">async function fetchPublishedSheet(group) {
+  const url = new URL(group.url_spreedsheet);
+  const gid = url.searchParams.get("gid");
+  if (!gid) throw new Error("Parameter gid tidak ditemukan.");
+
+  const response = await fetch(url.href, { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`Spreadsheet merespons HTTP ${response.status}.`);
+  }
+
+  const sheet = new DOMParser().parseFromString(
+    await response.text(),
+    "text/html",
+  );
+  const summary = sheet
+    .getElementById(`${gid}R2`)
+    ?.closest("tr")
+    ?.querySelector("td[colspan]")
+    ?.textContent
+    ?.replace(/\s+/g, " ")
+    .trim();
+
+  if (!summary) throw new Error("Ringkasan baris 3 tidak ditemukan.");
+  return { sheet, gid, summary };
+}</code></pre>
+        </figure>
+
+        <figure class="code-example">
+          <figcaption>3. Parse ringkasan dan tabel anggota mulai baris 4</figcaption>
+          <pre><code class="language-js">function parseGroupSheet(sheet, gid, summary) {
+            const parts = summary.split(/\s+[—–]\s+/);
+            const title = parts.shift() ?? "";
+            const match = title.match(/^(.*?)\s*\((\d+)\s+Mahasiswa\)\s*$/i);
+            const dplPart = parts.find((part) =&gt; /^DPL:/i.test(part));
+            const locationIndex = parts.findIndex((part) =&gt; /^Lokasi:/i.test(part));
+            if (!match || !dplPart || locationIndex &lt; 0) {
+              throw new Error("Format ringkasan kelompok berubah.");
+            }
+
+            const metadata = {
+              nama: match[1].trim(),
+              jumlah_anggota: Number(match[2]),
+              dpl: dplPart.replace(/^DPL:\s*/i, "").replace(/\s+\[[^\]]*\]\s*$/, "").trim(),
+              lokasi: parts[locationIndex].replace(/^Lokasi:\s*/i, "").trim(),
+              keterangan: parts.slice(locationIndex + 1).join(" — ").trim(),
+            };
+
+            const rosterHeader = sheet.getElementById(`${gid}R3`)?.closest("tr");
+            const headers = [...(rosterHeader?.querySelectorAll("td") ?? [])]
+              .map((cell) =&gt; cell.textContent.trim());
+            const expected = [
+              "No", "NIM", "Nama Mahasiswa",
+              "Program Studi (SIAKAD)", "Fakultas", "Angkatan",
+            ];
+            if (!rosterHeader || expected.some((value, index) =&gt; headers[index] !== value)) {
+              throw new Error("Format judul tabel anggota berubah.");
+            }
+
+            const members = [];
+            for (let row = rosterHeader.nextElementSibling; row; row = row.nextElementSibling) {
+              const values = [...row.querySelectorAll("td")]
+                .slice(0, expected.length)
+                .map((cell) =&gt; cell.textContent.replace(/\s+/g, " ").trim());
+              if (/^\d+$/.test(values[0] ?? "") &amp;&amp; values[2]) members.push(values);
+            }
+
+            return { metadata, roster: { headers: expected, rows: members } };
+          }</code></pre>
+        </figure>
+
+        <figure class="code-example">
+          <figcaption>4. Render tabel native dengan teks aman</figcaption>
+          <pre><code class="language-js">function renderMembersTable(tableHead, tableBody, headers, rows) {
+  const heading = document.createElement("tr");
+  for (const label of headers) {
+    const th = document.createElement("th");
+    th.scope = "col";
+    th.textContent = label;
+    heading.append(th);
+  }
+  tableHead.replaceChildren(heading);
+
+  const bodyRows = rows.map((values) =&gt; {
+    const tr = document.createElement("tr");
+    for (const value of values) {
+      const td = document.createElement("td");
+      td.textContent = value;
+      tr.append(td);
+    }
+    return tr;
+  });
+  tableBody.replaceChildren(...bodyRows);
+}</code></pre>
+        </figure>
+
+        <figure class="code-example">
+          <figcaption>5. Sinkronkan 25 kelompok tanpa menghentikan hasil lain</figcaption>
+                    <pre><code class="language-js">const memberRowsByGroup = new Map();
+
+          async function synchronizeGroups(groups) {
+            const results = await Promise.allSettled(
+              groups.map((group, index) =&gt; fetchGroupData(group, index + 1)),
+            );
+
+            results.forEach((result, index) =&gt; {
+              if (result.status === "fulfilled") {
+                Object.assign(groups[index], result.value.metadata);
+                memberRowsByGroup.set(index + 1, result.value);
+              } else {
+                console.error(`Kelompok ${index + 1} gagal dimuat:`, result.reason);
+              }
+            });
+          }</code></pre>
+        </figure>
+
+        <figure class="code-example">
+          <figcaption>6. Pilih tabel native atau spreadsheet asli dalam modal</figcaption>
+                    <pre><code class="language-js">openWebViewButton.addEventListener("click", () =&gt; openGroupViewer("native"));
+          openRawSheetButton.addEventListener("click", () =&gt; openGroupViewer("raw"));
+
+          function openGroupViewer(mode) {
+            const group = groups[activeGroupNumber - 1];
+            if (mode === "native") {
+              loadNativeTable(group, activeGroupNumber);
+              return;
+            }
+
+            const url = new URL(group.url_spreedsheet);
+            if (url.protocol !== "https:") throw new Error("URL harus menggunakan HTTPS.");
+            spreadsheetFrame.src = url.href;
+          }</code></pre>
+        </figure>
+
+        <figure class="code-example">
+          <figcaption>7. Pertahankan scroll horizontal dan vertikal tabel di mobile</figcaption>
+          <pre><code class="language-css">.table-scroll {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+
+.members-table {
+  min-width: 900px;
+}
+
+.members-table thead th {
+  position: sticky;
+  top: 0;
+}</code></pre>
+        </figure>
+
+        <figure class="code-example">
+          <figcaption>8. Cari kelompok berdasarkan nama anggota, NIM, prodi, atau metadata kelompok</figcaption>
+          <pre><code class="language-js">function matchesSearch(group, number, query, rosterRows = []) {
+  const terms = String(query ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("id")
+    .split(/\s+/)
+    .filter(Boolean);
+  const normalize = (value) =&gt; String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("id");
+  const groupText = [
+    group.nama,
+    `kelompok ${number}`,
+    group.dpl,
+    group.lokasi,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const searchableRecords = [
+    normalize(groupText),
+    ...rosterRows.map((row) =&gt; {
+      const nimDigits = String(row[1] ?? "").replace(/\D/g, "");
+      return normalize(`${groupText} ${row.join(" ")} ${nimDigits}`);
+    }),
+  ];
+
+  return terms.length === 0 || searchableRecords.some((record) =&gt;
+    terms.every((term) =&gt; record.includes(term)));
+}
+
+searchInput.addEventListener("input", (event) =&gt; {
+  renderGroups(event.currentTarget.value);
+});</code></pre>
+        </figure>
+      </section>
+
+      <section class="docs-block" aria-labelledby="views-title">
+        <h2 id="views-title">Dua mode tampilan spreadsheet</h2>
+        <div class="docs-view-grid">
+          <article>
+            <h3>Buka di website</h3>
+            <p>
+              Menggunakan data baris 4 dan seterusnya untuk membangun tabel HTML native. Isi sel
+              ditambahkan sebagai teks, bukan markup, dan area tabel memiliki scroll horizontal
+              serta vertikal sendiri.
+            </p>
+          </article>
+          <article>
+            <h3>Buka spreadsheet</h3>
+            <p>
+              Memuat URL publik asli dalam <code>iframe</code> di dialog yang sama. Tidak membuka
+              tab baru; tombol kembali menutup mode ini dan mengembalikan detail kelompok.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="docs-block" aria-labelledby="constraints-title">
+        <h2 id="constraints-title">Prasyarat dan batasan</h2>
+        <ul class="docs-bullets">
+          <li>Spreadsheet harus dipublikasikan sebagai HTML dan mengizinkan request lintas origin dari GitHub Pages (CORS).</li>
+          <li>Urutan baris serta ID baris <code>{gid}R2</code> dan <code>{gid}R3</code> adalah kontrak parser; perubahan format sheet perlu diikuti perubahan parser.</li>
+          <li>Data dan daftar anggota bersifat publik mengikuti izin spreadsheet. Situs tidak menambahkan autentikasi atau menyimpan data ke server.</li>
+          <li>Thumbnail tetap memakai <code>url_preview_thumbnail</code>; URL kosong berarti antarmuka menampilkan placeholder.</li>
+          <li>Logo dimuat dari URL eksternal yang ditetapkan pada HTML, sehingga tampilannya bergantung pada ketersediaan host logo.</li>
+        </ul>
+      </section>
+
+      <a class="docs-back-link" href="./index.html#listing">← Kembali ke daftar kelompok</a>
+    </main>
+
+    <footer class="site-footer">
+      <p>OpenLP2M - UMPR</p>
+      <p>
+        Situs ini bukan situs resmi Lembaga Penelitian dan Pengabdian kepada Masyarakat
+        Universitas Muhammadiyah Palangka Raya.
+      </p>
+      <p>Self Dev: <a href="https://github.com/winkykurniatama" target="_blank" rel="noopener noreferrer">@winkykurniatama</a></p>
+    </footer>
+
+    <script>
+      const jsKeywords = new Set([
+        "async", "await", "const", "else", "false", "for", "function", "if",
+        "let", "new", "null", "of", "return", "throw", "true", "var",
+      ]);
+      const jsTokens = /\/\/[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\b(?:async|await|const|else|false|for|function|if|let|new|null|of|return|throw|true|var)\b|\b\d+(?:\.\d+)?\b|\b[A-Za-z_$][\w$]*(?=\s*\()|=>|[{}()[\].,:;]/g;
+      const cssTokens = /\/\*[\s\S]*?\*\/|#[\da-fA-F]{3,8}\b|--[\w-]+|[A-Za-z-]+(?=\s*:)|\b\d+(?:\.\d+)?(?:px|vh|dvh|rem|em)?\b|[{}:;.,]/g;
+
+      function highlightCodeBlock(code) {
+        const source = code.textContent;
+        const css = code.classList.contains("language-css");
+        const pattern = css ? cssTokens : jsTokens;
+        const fragment = document.createDocumentFragment();
+        let cursor = 0;
+
+        for (const match of source.matchAll(pattern)) {
+          const token = match[0];
+          const start = match.index;
+          if (start > cursor) fragment.append(source.slice(cursor, start));
+
+          let tokenClass = "token-punctuation";
+          if (css) {
+            if (token.startsWith("/*")) tokenClass = "token-comment";
+            else if (token.startsWith("#")) tokenClass = "token-color";
+            else if (/^[A-Za-z-]+$/.test(token) && source.slice(start + token.length).match(/^\s*:/)) {
+              tokenClass = "token-property";
+            } else if (/^\d/.test(token)) tokenClass = "token-number";
+          } else if (token.startsWith("//")) tokenClass = "token-comment";
+          else if (/^["'`]/.test(token)) tokenClass = "token-string";
+          else if (jsKeywords.has(token)) tokenClass = "token-keyword";
+          else if (/^\d/.test(token)) tokenClass = "token-number";
+          else if (/^[A-Za-z_$]/.test(token)) tokenClass = "token-function";
+
+          const span = document.createElement("span");
+          span.className = tokenClass;
+          span.textContent = token;
+          fragment.append(span);
+          cursor = start + token.length;
+        }
+
+        if (cursor < source.length) fragment.append(source.slice(cursor));
+        code.replaceChildren(fragment);
+      }
+
+      document.querySelectorAll(".code-example code").forEach(highlightCodeBlock);
+    </script>
+  </body>
+</html>

@@ -448,10 +448,14 @@ h1 span {
 
 .docs-lead {
   max-width: 720px;
-  margin: 17px 0 36px;
+  margin: 17px 0 12px;
   color: var(--muted);
   font-size: 15px;
   line-height: 1.75;
+}
+
+.docs-source-action {
+  margin-bottom: 36px;
 }
 
 .docs-block {

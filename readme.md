@@ -18,7 +18,7 @@
   <img src="https://img.shields.io/badge/kelompok-KKN-2463eb?style=for-the-badge" alt="25 kelompok">
 </p>
 
-> **Catatan:** Ini proyek independen dan bukan situs resmi Lembaga Penelitian dan Pengabdian kepada Masyarakat Universitas Muhammadiyah Palangka Raya. Dikembangkan oleh [@winkykurniatama](https://github.com/winkykurniatama).
+> **Catatan:** Ini proyek independen dan bukan situs resmi Lembaga Penelitian dan Pengabdian kepada Masyarakat Universitas Muhammadiyah Palangka Raya. Dikembangkan oleh [@winkykurniatama](https://github.com/winkyid).
 
 ## Tentang
 
